@@ -56,6 +56,7 @@ def register():
         realname = request.form["realname"]
         username = request.form["username"]
         password = request.form["password"]
+        repeat = request.form["repeat"]
         db = get_db()
         error = None
 
@@ -65,6 +66,8 @@ def register():
             error = "请输入用户名"
         elif not password:
             error = "请输入密码"
+        elif password != repeat:
+            error = "两次输入密码不一致"
 
         if error is None:
             try:
