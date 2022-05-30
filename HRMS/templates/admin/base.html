@@ -97,7 +97,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                    alt="User Image">
             </div>
             <div class="info">
-              <a href="#" class="d-block">{{ g.user['用户名'] }}</a>
+              <a href="#" class="d-block">{{ g.user_info['真实姓名'] }}</a>
             </div>
           </div>
           <!-- SidebarSearch Form -->
@@ -154,7 +154,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
         <div class="p-3">
-          <h5>您好 {{ g.user["用户名"] }}！</h5>
+          <h5>您好 {{ g.user_info["真实姓名"] }}！</h5>
           <p>
             <a href="/auth/logout">登出</a>
           </p>

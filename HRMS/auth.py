@@ -37,12 +37,13 @@ def load_logged_in_user():
 
     if user_id is None:
         g.user = None
+        g.user_info = None
     else:
-        g.user = (
-            get_db()
-            .execute("SELECT * FROM 用户验证表 WHERE 用户编号 = ?", (user_id,))
-            .fetchone()
-        )
+        db = get_db()
+        g.user = db.execute("SELECT * FROM 用户验证表 WHERE 用户编号 = ?", (user_id,)).fetchone()
+        g.user_info = db.execute(
+            "SELECT * FROM 用户信息表 WHERE 用户编号 = ?", (user_id,)
+        ).fetchone()
 
 
 @bp.route("/register", methods=("GET", "POST"))
