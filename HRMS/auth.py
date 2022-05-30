@@ -39,7 +39,9 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = (
-            get_db().execute("SELECT * FROM 用户验证表 WHERE 用户编号 = ?", (user_id,)).fetchone()
+            get_db()
+            .execute("SELECT * FROM 用户验证表 WHERE 用户编号 = ?", (user_id,))
+            .fetchone()
         )
 
 
@@ -51,15 +53,18 @@ def register():
     password for security.
     """
     if request.method == "POST":
+        realname = request.form["realname"]
         username = request.form["username"]
         password = request.form["password"]
         db = get_db()
         error = None
 
-        if not username:
-            error = "Username is required."
+        if not realname:
+            error = "请输入真实姓名"
+        elif not username:
+            error = "请输入用户名"
         elif not password:
-            error = "Password is required."
+            error = "请输入密码"
 
         if error is None:
             try:
@@ -68,10 +73,24 @@ def register():
                     (username, generate_password_hash(password)),
                 )
                 db.commit()
+
+                user = db.execute(
+                    "SELECT * FROM 用户验证表 WHERE 用户名 = ?", (username,)
+                ).fetchone()
+                user_id = user["用户编号"]
+
+                db.execute(
+                    "INSERT INTO 用户信息表 (用户编号, 真实姓名) VALUES (?, ?)",
+                    (
+                        user_id,
+                        realname,
+                    ),
+                )
+                db.commit()
             except db.IntegrityError:
                 # The username was already taken, which caused the
                 # commit to fail. Show a validation error.
-                error = f"User {username} is already registered."
+                error = f"用户名 {username} 已注册"
             else:
                 # Success, go to the login page.
                 return redirect(url_for("auth.login"))
@@ -89,14 +108,12 @@ def login():
         password = request.form["password"]
         db = get_db()
         error = None
-        user = db.execute(
-            "SELECT * FROM 用户验证表 WHERE 用户名 = ?", (username,)
-        ).fetchone()
+        user = db.execute("SELECT * FROM 用户验证表 WHERE 用户名 = ?", (username,)).fetchone()
 
         if user is None:
-            error = "Incorrect username."
+            error = "用户名错误"
         elif not check_password_hash(user["密码"], password):
-            error = "Incorrect password."
+            error = "密码错误"
 
         if error is None:
             # store the user id in a new session and return to the index
