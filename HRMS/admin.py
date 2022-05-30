@@ -18,3 +18,13 @@ bp = Blueprint("admin", __name__)
 def index():
     db = get_db()
     return render_template("admin/index.html")
+
+
+@bp.route("/user/modify", methods=["GET", "POST"])
+@login_required
+def modify():
+    immutable_info = {"用户编号", "用户类型", "权限"}
+    if request.method == "POST":
+        pass
+
+    return render_template("admin/user/modify.html", immutable_info=immutable_info)

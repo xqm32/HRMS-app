@@ -1,0 +1,18 @@
+{% extends 'admin/base.html' %}
+{% set title = '用户信息' %}
+{% block content %}
+  <form method="POST">
+    <div class="card-body">
+      {% for i in g.user_info.keys() %}
+        <div class="form-group">
+          <label for="{{ i }}">{{ i }}</label>
+          <input class="form-control" id="{{ i }}" value="{{ g.user_info[i] if g.user_info[i] }}" placeholder="{{ i if not g.user_info[i] }}" {{ 'disabled' if i in immutable_info }}>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+{% endblock %}
