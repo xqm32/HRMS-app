@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Registration Page - HRMS</title>
+    <title>注册 - HRMS</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link
@@ -33,7 +33,7 @@
           <a href="/" class="h1"><b>HR</b>MS</a>
         </div>
         <div class="card-body">
-          <p class="login-box-msg">Register a new membership</p>
+          <p class="login-box-msg">注册</p>
 
           {% for message in get_flashed_messages() %}
           <p class="login-box-msg" style="color: red">{{ message }}</p>
@@ -41,7 +41,7 @@
 
           <form method="post">
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Full name" />
+              <input type="text" class="form-control" placeholder="真实姓名" />
               <div class="input-group-append">
                 <div class="input-group-text">
                   <span class="fas fa-signature"></span>
@@ -52,7 +52,7 @@
               <input
                 name="username"
                 class="form-control"
-                placeholder="Username"
+                placeholder="用户名"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -65,7 +65,7 @@
                 name="password"
                 type="password"
                 class="form-control"
-                placeholder="Password"
+                placeholder="密码"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -77,7 +77,7 @@
               <input
                 type="password"
                 class="form-control"
-                placeholder="Retype password"
+                placeholder="确认密码"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -95,14 +95,14 @@
                     value="agree"
                   />
                   <label for="agreeTerms">
-                    I agree to the <a href="#">terms</a>
+                    我同意 <a href="#">使用协议</a>
                   </label>
                 </div>
               </div>
               <!-- /.col -->
               <div class="col-4">
                 <button type="submit" class="btn btn-primary btn-block">
-                  Register
+                  注册
                 </button>
               </div>
               <!-- /.col -->
@@ -110,7 +110,7 @@
           </form>
 
           <a href="{{ url_for('auth.login') }}" class="text-center"
-            >I already have a membership</a
+            >已有账号</a
           >
         </div>
         <!-- /.form-box -->

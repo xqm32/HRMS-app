@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Log in - HRMS</title>
+    <title>登录 - HRMS</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link
@@ -34,7 +34,7 @@
           <a href="/" class="h1"><b>HR</b>MS</a>
         </div>
         <div class="card-body">
-          <p class="login-box-msg">Sign in to start your session</p>
+          <p class="login-box-msg">登录</p>
 
           {% for message in get_flashed_messages() %}
           <p class="login-box-msg" style="color: red">{{ message }}</p>
@@ -45,7 +45,7 @@
               <input
                 name="username"
                 class="form-control"
-                placeholder="Username"
+                placeholder="用户名"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -58,7 +58,7 @@
                 name="password"
                 type="password"
                 class="form-control"
-                placeholder="Password"
+                placeholder="密码"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -70,25 +70,22 @@
               <div class="col-8">
                 <div class="icheck-primary">
                   <input type="checkbox" id="remember" />
-                  <label for="remember"> Remember Me </label>
+                  <label for="remember"> 记住我 </label>
                 </div>
               </div>
               <!-- /.col -->
               <div class="col-4">
                 <button type="submit" class="btn btn-primary btn-block">
-                  Sign In
+                  登录
                 </button>
               </div>
               <!-- /.col -->
             </div>
           </form>
 
-          <p class="mb-1">
-            <a href="forgot-password.html">I forgot my password</a>
-          </p>
           <p class="mb-0">
             <a href="{{ url_for('auth.register') }}" class="text-center"
-              >Register a new membership</a
+              >注册账号</a
             >
           </p>
         </div>
