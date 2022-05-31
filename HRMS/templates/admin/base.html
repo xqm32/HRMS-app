@@ -19,6 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet"
           href="{{ url_for('static', filename='dist/css/adminlte.min.css') }}">
+    {% include 'assets/toast-style.html' %}
     {% block style %}{% endblock %}
   </head>
   <body class="hold-transition sidebar-mini">
@@ -179,6 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+    {% include 'assets/toast-script.html' %}
     {% block script %}{% endblock %}
   </body>
 </html>

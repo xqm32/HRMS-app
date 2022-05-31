@@ -1,6 +1,6 @@
 from typing import Dict, Iterable
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session
 from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash
 
@@ -29,14 +29,14 @@ def update_table(
     immutable_columns: Iterable[str],
     form: Dict,
     where_clause: str,
-    success_message=None,
-    functions: Dict = {},
+    message=(),
 ):
     db = get_db()
     table_columns = get_columns(table)
 
     for i in immutable_columns:
-        table_columns.remove(i)
+        if i in table_columns:
+            table_columns.remove(i)
 
     set_clause = ", ".join(f"{i} = ?" for i in table_columns)
 
@@ -46,17 +46,14 @@ def update_table(
     try:
         db.execute(
             f"UPDATE {table} SET {set_clause} WHERE {where_clause}",
-            [
-                functions[i](form[i]) if i in functions else form[i]
-                for i in table_columns
-            ],
+            [form[i] for i in table_columns],
         )
         db.commit()
     except Exception as e:
         flash(e, "error")
     else:
-        if success_message:
-            flash("修改用户信息成功", "success")
+        if message:
+            flash(*message)
 
 
 @bp.route("/user/modify", methods=["GET", "POST"])
@@ -64,52 +61,47 @@ def update_table(
 def modify():
     db = get_db()
 
-    immutable_columns = {"用户编号", "用户类型", "权限"}
-    if request.method == "POST":
-        update_table(
-            "用户信息表",
-            immutable_columns,
-            request.form,
-            f"用户编号 = {g.user['用户编号']}",
-            success_message="修改用户信息成功",
-        )
-
-        g.user_info = db.execute(
-            "SELECT * FROM 用户信息表 WHERE 用户编号 = ?", (g.user["用户编号"],)
-        ).fetchone()
-
-    return render_template(
-        "admin/user/modify.html", immutable_columns=immutable_columns
-    )
-
-
-@bp.route("/user/password", methods=["GET", "POST"])
-@login_required
-def password():
-    db = get_db()
-
-    immutable_columns = {"用户编号", "用户名"}
+    immutable_columns = {"用户编号", "用户类型", "权限", "用户名"}
     input_types = {"密码": "password"}
-    if request.method == "POST":
-        update_table(
-            "用户验证表",
-            immutable_columns,
-            request.form,
-            f"用户编号 = {g.user['用户编号']}",
-            success_message="修改用户信息成功",
-            functions={"密码": generate_password_hash},
-        )
 
-        g.user = db.execute(
-            "SELECT * FROM 用户验证表 WHERE 用户编号 = ?", (g.user["用户编号"],)
-        ).fetchone()
+    if request.method == "POST":
+        if request.form["table"] == "user_info":
+            update_table(
+                "用户信息表",
+                immutable_columns,
+                request.form,
+                f"用户编号 = {g.user['用户编号']}",
+                message=("信息修改成功", "success"),
+            )
+
+            g.user_info = db.execute(
+                "SELECT * FROM 用户信息表 WHERE 用户编号 = ?", (g.user["用户编号"],)
+            ).fetchone()
+        elif request.form["table"] == "user":
+            form = dict(request.form)
+            form["密码"] = generate_password_hash(form["密码"])
+
+            update_table(
+                "用户验证表",
+                immutable_columns,
+                form,
+                f"用户编号 = {g.user['用户编号']}",
+            )
+
+            session.clear()
+
+            flash("密码修改成功，请重新登录", "success")
+
+            return redirect(url_for("index"))
 
     user = dict(g.user)
     user.update({"密码": ""})
+    user_info = dict(g.user_info)
+    table = {"user": user, "user_info": user_info}
 
     return render_template(
-        "admin/user/password.html",
-        table=user,
+        "admin/user/modify.html",
+        table=table,
         input_types=input_types,
         immutable_columns=immutable_columns,
     )

@@ -96,10 +96,11 @@ def register():
                 # commit to fail. Show a validation error.
                 error = f"用户名 {username} 已注册"
             else:
+                flash("注册成功", "success")
                 # Success, go to the login page.
                 return redirect(url_for("auth.login"))
 
-        flash(error)
+        flash(error, "error")
 
     return render_template("auth/register.html")
 
@@ -125,7 +126,7 @@ def login():
             session["user_id"] = user["用户编号"]
             return redirect(url_for("index"))
 
-        flash(error)
+        flash(error, "error")
 
     return render_template("auth/login.html")
 
