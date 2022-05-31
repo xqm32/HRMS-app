@@ -16,7 +16,7 @@
                 {% for i in table['user_info'].keys() %}
                   <div class="form-group">
                     <label for="{{ i }}">{{ i }}</label>
-                    <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ table['user_info'][i] if table['user_info'][i] }}" placeholder="{{ i if not table['user_info'][i] }}" {{ 'disabled' if i in immutable_columns }}>
+                    <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ table['user_info'][i] if table['user_info'][i] }}" placeholder="{{ i if not table['user_info'][i] }}" {{ 'disabled' if i in immutable_columns }} {{ 'type='+input_types[i] if i in input_types }}>
                   </div>
                 {% endfor %}
               </div>
@@ -43,6 +43,14 @@
                     <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ table['user'][i] if table['user'][i] }}" placeholder="{{ i if not table['user'][i] }}" {{ 'disabled' if i in immutable_columns }} {{ 'type='+input_types[i] if i in input_types }}>
                   </div>
                 {% endfor %}
+                <div class="form-group">
+                  <label for="确认密码">确认密码</label>
+                  <input name="确认密码"
+                         class="form-control"
+                         id="确认密码"
+                         placeholder="确认密码"
+                         type="password">
+                </div>
               </div>
               <input name="table" value="user" hidden>
               <!-- /.card-body -->

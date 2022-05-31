@@ -102,7 +102,7 @@ def modify():
     db = get_db()
 
     immutable_columns = {"用户编号", "用户类型", "权限", "用户名"}
-    input_types = {"密码": "password"}
+    input_types = {"密码": "password", "邮箱": "email"}
 
     if request.method == "POST":
         if request.form["table"] == "user_info":
@@ -119,20 +119,23 @@ def modify():
             ).fetchone()
         elif request.form["table"] == "user":
             form = dict(request.form)
-            form["密码"] = generate_password_hash(form["密码"])
+            if form["密码"] == form["确认密码"]:
+                form["密码"] = generate_password_hash(form["密码"])
 
-            update_table(
-                "用户验证表",
-                immutable_columns,
-                form,
-                f"用户编号 = {g.user['用户编号']}",  # 用户编号不从 form 中读取，这样可以不进行鉴权
-            )
+                update_table(
+                    "用户验证表",
+                    immutable_columns,
+                    form,
+                    f"用户编号 = {g.user['用户编号']}",  # 用户编号不从 form 中读取，这样可以不进行鉴权
+                )
 
-            session.clear()
+                session.clear()
 
-            flash("密码修改成功，请重新登录", "success")
+                flash("密码修改成功，请重新登录", "success")
 
-            return redirect(url_for("index"))
+                return redirect(url_for("index"))
+            else:
+                flash("两次输入密码不一致", "error")
 
     user = dict(g.user)
     user.update({"密码": ""})
