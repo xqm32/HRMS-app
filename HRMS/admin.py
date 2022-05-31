@@ -1,4 +1,5 @@
 from typing import Dict, Iterable
+import maya, datetime
 
 from flask import (
     Blueprint,
@@ -17,12 +18,6 @@ from HRMS.auth import login_required
 from HRMS.db import get_db
 
 bp = Blueprint("admin", __name__)
-
-
-@bp.route("/")
-@login_required
-def index():
-    return render_template("admin/index.html")
 
 
 def get_columns(table: str):
@@ -63,6 +58,42 @@ def update_table(
     else:
         if message:
             flash(*message)
+
+
+@bp.route("/")
+@login_required
+def index():
+    db = get_db()
+
+    department_count = db.execute("SELECT COUNT(*) AS COUNT FROM 部门信息表").fetchone()
+    employee_count = db.execute("SELECT COUNT(*) AS COUNT FROM 员工基本信息表").fetchone()
+
+    attendance_count = db.execute(
+        "SELECT COUNT(*) AS COUNT FROM 考勤信息表 WHERE 考勤日期 = ?",
+        (maya.now().datetime(to_timezone="Asia/Shanghai").strftime("%Y-%m-%d"),),
+    ).fetchone()
+    try:
+        attendance_rate = f"{attendance_count['COUNT']/employee_count['COUNT']*100:.2f}"
+    except ZeroDivisionError:
+        attendance_rate = "0.00"
+    
+    wages_sum = db.execute(
+        "SELECT SUM(应发工资) AS SUM FROM 工资计发信息表 WHERE 计发日期 = ?",
+        (maya.now().datetime(to_timezone="Asia/Shanghai").strftime("%Y-%m"),),
+    ).fetchone()
+    if wages_sum["SUM"] is None:
+        total_wages = "0.00"
+    else:
+        total_wages = f"{wages_sum['SUM']:.2f}"
+
+    table = {
+        "部门数量": department_count["COUNT"],
+        "员工数量": employee_count["COUNT"],
+        "计发工资": total_wages,
+        "考勤率": attendance_rate,
+    }
+
+    return render_template("admin/index.html", table=table)
 
 
 @bp.route("/user/modify", methods=["GET", "POST"])
