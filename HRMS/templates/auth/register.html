@@ -87,20 +87,19 @@
               <!-- /.col -->
             </div>
           </form>
-        <a href="{{ url_for('auth.login') }}" class="text-center">已有账号</a
-        >
+          <a href="{{ url_for('auth.login') }}" class="text-center">已有账号</a>
+        </div>
+        <!-- /.form-box -->
       </div>
-      <!-- /.form-box -->
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.register-box -->
-  <!-- jQuery -->
-  <script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
-  <!-- Bootstrap 4 -->
-  <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <!-- AdminLTE App -->
-  <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
-  {% include 'assets/toast-script.html' %}
-</body>
+    <!-- /.register-box -->
+    <!-- jQuery -->
+    <script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+    {% include 'assets/toast-script.html' %}
+  </body>
 </html>

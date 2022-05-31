@@ -1,15 +1,16 @@
 import functools
 
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
-from flask import url_for
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from flask import (
+    Blueprint,
+    flash,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from HRMS.db import get_db
 
@@ -135,4 +136,5 @@ def login():
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
+    flash("您已登出", "info")
     return redirect(url_for("index"))

@@ -1,17 +1,17 @@
 <script src="{{ url_for('static', filename='plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
-var Toast = Swal.mixin({
+  var Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: "top-end",
     showConfirmButton: false,
-    timer: 3000
+    timer: 3000,
   });
 </script>
 {% for message in get_flashed_messages(with_categories=True) %}
   <script>
-Toast.fire({
-    icon: '{{ message[0] }}',
-    title: '{{ message[1] }}'
-  })
+  Toast.fire({
+    icon: "{{ message[0] }}",
+    title: "{{ message[1] }}",
+  });
   </script>
 {% endfor %}

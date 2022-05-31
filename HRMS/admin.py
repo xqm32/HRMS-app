@@ -1,6 +1,15 @@
 from typing import Dict, Iterable
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session
+from flask import (
+    Blueprint,
+    flash,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash
 
@@ -70,7 +79,7 @@ def modify():
                 "用户信息表",
                 immutable_columns,
                 request.form,
-                f"用户编号 = {g.user['用户编号']}",
+                f"用户编号 = {g.user['用户编号']}",  # 用户编号不从 form 中读取，这样可以不进行鉴权
                 message=("信息修改成功", "success"),
             )
 
@@ -85,7 +94,7 @@ def modify():
                 "用户验证表",
                 immutable_columns,
                 form,
-                f"用户编号 = {g.user['用户编号']}",
+                f"用户编号 = {g.user['用户编号']}",  # 用户编号不从 form 中读取，这样可以不进行鉴权
             )
 
             session.clear()
