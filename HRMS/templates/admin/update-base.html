@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">修改信息</h3>
+            </div>
+            <form method="POST">
+              <div class="card-body">
+                {% for i in row.keys() %}
+                  <div class="form-group">
+                    <label for="{{ i }}">{{ i }}</label>
+                    <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ row[i] if row[i] }}" placeholder="{{ i if not row[i] }}"  {{ 'disabled' if i in immutable_columns }} {{ 'type='+input_types[i] if i in input_types }}>
+                  </div>
+                {% endfor %}
+              </div>
+              <input name="table" value="user_info" hidden>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-success">保存</button>
+                <button type="reset" class="btn btn-default float-right">取消</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+  {% endblock %}

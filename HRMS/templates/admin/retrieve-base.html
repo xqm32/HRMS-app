@@ -10,41 +10,44 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">{{ table_title }}</h3>
-              <a class="float-right" href="#"><i class="fas fa-plus"></i></a>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-              <table class="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    {% for i in header %}<th>{{ i }}</th>{% endfor %}
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for i in content %}
-                    <tr>
-                      {% for j in header %}<td>{{ i[j] }}</td>{% endfor %}
-                      <td class="text-center">
-                        <a class="mr-1" href="#"><i class="fas fa-edit"></i></a>
-                        <a class="ml-1" href="#"><i class="fas fa-trash"></i></a>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
+              <h3 class="card-title">{{ table_name }}</h3>
+            <a class="float-right" href="/create/{{ table_name }}"><i class="fas fa-plus"></i
+          ></a>
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-    </div>
-    <!-- /.container-fluid -->
-  </section>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                {% for i in header %}<th>{{ i }}</th>{% endfor %}
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in content %}
+                <tr>
+                  {% for j in header %}<td>{{ i['row'][j] if i['row'][j] }}</td>{% endfor %}
+                  <td class="text-center">
+                  <a class="mr-1" href="/update/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-edit"></i
+                ></a>
+              <a class="ml-1" href="/delete/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-trash"></i
+            ></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<!-- /.card-body -->
+</div>
+<!-- /.card -->
+</div>
+<!-- /.col -->
+</div>
+<!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+</section>
 {% endblock %}
 {% block script %}
   {% include 'assets/datatables-script.html' %}
