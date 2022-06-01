@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS "员工基本信息表" (
 	"员工编号"	INTEGER NOT NULL,
 	"姓名"	TEXT NOT NULL,
 	"性别"	TEXT NOT NULL,
-	"所属部门编号"	TEXT,
+	"所属部门编号"	INTEGER,
 	"进入部门日期"	TEXT NOT NULL,
-	"职务编号"	TEXT NOT NULL,
+	"职务编号"	INTEGER NOT NULL,
 	"职称"	TEXT,
 	"起薪日"	TEXT,
 	"在岗状态"	TEXT NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "员工学历信息表" (
 DROP TABLE IF EXISTS "员工录用信息表";
 CREATE TABLE IF NOT EXISTS "员工录用信息表" (
 	"签约合同编号"	INTEGER NOT NULL,
-	"员工编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
 	"姓名"	TEXT NOT NULL,
 	"签约日期"	TEXT NOT NULL,
 	"到期日"	TEXT NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS "员工录用信息表" (
 );
 DROP TABLE IF EXISTS "员工私人信息表";
 CREATE TABLE IF NOT EXISTS "员工私人信息表" (
-	"员工编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
 	"姓名"	TEXT NOT NULL,
 	"地址"	TEXT,
 	"电话"	TEXT,
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS "员工私人信息表" (
 );
 DROP TABLE IF EXISTS "家庭关系表";
 CREATE TABLE IF NOT EXISTS "家庭关系表" (
-	"员工编号"	TEXT NOT NULL,
-	"家庭编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
+	"家庭编号"	INTEGER NOT NULL,
 	"姓名"	VARCHAR NOT NULL,
 	"性别"	TEXT,
 	"年龄"	INTEGER,
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS "家庭关系表" (
 );
 DROP TABLE IF EXISTS "工作考核信息表";
 CREATE TABLE IF NOT EXISTS "工作考核信息表" (
-	"员工编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
 	"考核日期"	TEXT NOT NULL,
 	"工作态度"	TEXT,
 	"工作业绩"	TEXT,
@@ -102,8 +102,8 @@ CREATE TABLE IF NOT EXISTS "工资标准信息表" (
 DROP TABLE IF EXISTS "工资计发信息表";
 CREATE TABLE IF NOT EXISTS "工资计发信息表" (
 	"自动编号"	INTEGER NOT NULL,
-	"员工编号"	TEXT NOT NULL,
-	"工资等级编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
+	"工资等级编号"	INTEGER NOT NULL,
 	"底薪"	REAL NOT NULL,
 	"补贴"	REAL,
 	"奖金"	REAL,
@@ -119,12 +119,12 @@ CREATE TABLE IF NOT EXISTS "工资计发信息表" (
 	"应发工资"	REAL,
 	"计发日期"	TEXT NOT NULL,
 	PRIMARY KEY("自动编号" AUTOINCREMENT),
-	FOREIGN KEY("工资等级编号") REFERENCES "工资标准信息表"("工资等级编号"),
-	FOREIGN KEY("员工编号") REFERENCES "员工基本信息表"("员工编号")
+	FOREIGN KEY("员工编号") REFERENCES "员工基本信息表"("员工编号"),
+	FOREIGN KEY("工资等级编号") REFERENCES "工资标准信息表"("工资等级编号")
 );
 DROP TABLE IF EXISTS "用户信息表";
 CREATE TABLE IF NOT EXISTS "用户信息表" (
-	"用户编号"	TEXT NOT NULL,
+	"用户编号"	INTEGER NOT NULL,
 	"真实姓名"	TEXT NOT NULL,
 	"用户类型"	TEXT DEFAULT 普通用户,
 	"权限"	TEXT DEFAULT 10,
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS "用户验证表" (
 DROP TABLE IF EXISTS "考勤信息表";
 CREATE TABLE IF NOT EXISTS "考勤信息表" (
 	"自动编号"	INTEGER NOT NULL,
-	"员工编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
 	"考勤日期"	TEXT NOT NULL,
 	"考勤类型"	TEXT NOT NULL,
 	"考勤天数"	TEXT NOT NULL,
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS "考勤信息表" (
 DROP TABLE IF EXISTS "考勤考核信息表";
 CREATE TABLE IF NOT EXISTS "考勤考核信息表" (
 	"自动编号"	INTEGER NOT NULL,
-	"员工编号"	TEXT NOT NULL,
+	"员工编号"	INTEGER NOT NULL,
 	"出勤日期"	TEXT NOT NULL,
 	"奖励"	TEXT NOT NULL,
 	"惩罚"	TEXT NOT NULL,
