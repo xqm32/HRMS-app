@@ -232,6 +232,7 @@ def create(table_name):
 
     return render_template(
         "admin/create-base.html",
+        title="添加信息",
         table_name=table_name,
         columns=table_columns,
         immutable_columns=immutable_columns,
@@ -289,6 +290,7 @@ def update(table_name):
 
     return render_template(
         "admin/update-base.html",
+        title="修改信息",
         table_name=table_name,
         row=row,
         immutable_columns=table_pk,
