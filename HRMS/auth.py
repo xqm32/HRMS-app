@@ -117,7 +117,7 @@ def login():
         user = db.execute("SELECT * FROM 用户验证表 WHERE 用户名 = ?", (username,)).fetchone()
 
         if user is None:
-            error = "用户名错误"
+            error = f"用户 {username} 不存在"
         elif not check_password_hash(user["密码"], password):
             error = "密码错误"
 
