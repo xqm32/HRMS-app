@@ -20,11 +20,11 @@ def to_args(columns, row):
     return "&".join(f"{j}={str(row[j])}" for j in columns)
 
 
-def get_columns(table: str, with_pk=False, with_fk=False):
+def get_columns(table_name: str, with_pk=False, with_fk=False):
     db = get_db()
     ret = dict()
 
-    table_schema = db.execute(f"PRAGMA table_info({table})").fetchall()
+    table_schema = table_info(table_name)
 
     table_columns = select(table_schema, "name")
     ret.update({"columns": table_columns})
@@ -34,10 +34,28 @@ def get_columns(table: str, with_pk=False, with_fk=False):
         ret.update({"pk": table_pk})
 
     if with_fk:
-        table_fk = db.execute(f"PRAGMA foreign_key_list({table})").fetchall()
+        table_fk = foregin_key_list(table_name)
         ret.update({"fk": table_fk})
 
     return ret
+
+
+def table_info(table_name):
+    db = get_db()
+    table_info = db.execute(f"PRAGMA table_info({table_name})").fetchall()
+    return table_info
+
+
+def table_xinfo(table_name):
+    db = get_db()
+    table_xinfo = db.execute(f"PRAGMA tablex_info({table_name})").fetchall()
+    return table_xinfo
+
+
+def foregin_key_list(table_name: str):
+    db = get_db()
+    table_fk = db.execute(f"PRAGMA foreign_key_list({table_name})").fetchall()
+    return table_fk
 
 
 def create_table(
