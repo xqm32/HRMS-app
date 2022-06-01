@@ -212,8 +212,8 @@ def delete(table_name):
     try:
         db.execute(f"DELETE FROM {table_name} WHERE {to_where_clause(request.args)}")
         db.commit()
-    except Exception as e:
-        flash(e, "error")
+    except db.IntegrityError:
+        flash("数据库错误", "error")
     else:
         flash("删除成功", "success")
 

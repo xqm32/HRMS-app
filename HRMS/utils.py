@@ -65,8 +65,8 @@ def create_table(
             [form[i] for i in table_columns],
         )
         db.commit()
-    except Exception as e:
-        flash(e, "error")
+    except db.IntegrityError:
+        flash("数据库错误", "error")
     else:
         if message:
             flash(*message)
@@ -97,8 +97,8 @@ def update_table(
             [form[i] for i in table_columns],
         )
         db.commit()
-    except Exception as e:
-        flash(e, "error")
+    except db.IntegrityError:
+        flash("数据库错误", "error")
     else:
         if message:
             flash(*message)
