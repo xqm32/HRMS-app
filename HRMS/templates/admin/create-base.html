@@ -12,7 +12,7 @@
             </div>
             <form method="POST">
               <div class="card-body">
-                {% for i in columns %}
+                {% for i in header %}
                   {% if i not in immutable_columns %}
                     <div class="form-group">
                       <label for="{{ i }}">{{ i }}</label>

@@ -123,13 +123,12 @@ def user_update():
 @login_required
 def create(table_name):
     ret = get_columns(table_name, with_pk=True, with_fk=True, with_notnull=True)
-    table_columns = ret["columns"]
+    header = ret["columns"]
     table_pk = ret["pk"]
     table_fk = select(ret["fk"], "from")
     table_notnull = ret["notnull"]
     immutable_columns = []
 
-    print(table_notnull)
 
     # 去除自动编号
     for i in table_pk:
@@ -144,9 +143,9 @@ def create(table_name):
         "admin/create-base.html",
         title="添加信息",
         table_name=table_name,
-        columns=table_columns,
-        notnull_columns=table_notnull,
+        header=header,
         immutable_columns=immutable_columns,
+        notnull_columns=table_notnull,
     )
 
 
@@ -179,8 +178,9 @@ def retrieve(table_name):
 @login_required
 def update(table_name):
     db = get_db()
-    ret = get_columns(table_name, with_pk=True)
+    ret = get_columns(table_name, with_pk=True, with_notnull=True)
     table_pk = ret["pk"]
+    table_notnull = ret["notnull"]
 
     if request.method == "POST":
         update_table(
@@ -192,19 +192,20 @@ def update(table_name):
         )
         return redirect(url_for("admin.retrieve", table_name=table_name))
 
-    row = db.execute(
+    content = db.execute(
         f"SELECT * FROM {table_name} WHERE {to_where_clause(request.args)}"
     ).fetchone()
 
-    if row is None:
+    if content is None:
         abort(404)
 
     return render_template(
         "admin/update-base.html",
         title="修改信息",
         table_name=table_name,
-        row=row,
+        content=content,
         immutable_columns=table_pk,
+        notnull_columns=table_notnull,
     )
 
 

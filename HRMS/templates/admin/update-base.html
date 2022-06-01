@@ -12,10 +12,10 @@
             </div>
             <form method="POST">
               <div class="card-body">
-                {% for i in row.keys() %}
+                {% for i in content.keys() %}
                   <div class="form-group">
                     <label for="{{ i }}">{{ i }}</label>
-                    <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ row[i] if row[i] }}" placeholder="{{ i if not row[i] }}"  {{ 'disabled' if i in immutable_columns }} {{ 'type='+input_types[i] if i in input_types }}>
+                    <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ content[i] if content[i] }}" placeholder="{{ i if not content[i] }}"  {{ 'disabled' if i in immutable_columns }} {{ 'type='+input_types[i] if i in input_types }} {{ 'required' if i in notnull_columns }} >
                   </div>
                 {% endfor %}
               </div>
