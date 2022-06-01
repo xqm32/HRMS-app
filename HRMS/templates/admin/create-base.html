@@ -16,7 +16,7 @@
                   {% if i not in immutable_columns %}
                     <div class="form-group">
                       <label for="{{ i }}">{{ i }}</label>
-                      <input name="{{ i }}" class="form-control" id="{{ i }}" placeholder="{{ i }}" {{ 'type='+input_types[i] if i in input_types }}>
+                      <input name="{{ i }}" class="form-control" id="{{ i }}" placeholder="{{ i }}" {{ 'type='+input_types[i] if i in input_types }} {{ 'required' if i in notnull_columns }} >
                     </div>
                   {% endif %}
                 {% endfor %}

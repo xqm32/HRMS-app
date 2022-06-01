@@ -20,7 +20,7 @@ def to_args(columns, row):
     return "&".join(f"{j}={str(row[j])}" for j in columns)
 
 
-def get_columns(table_name: str, with_pk=False, with_fk=False):
+def get_columns(table_name: str, with_pk=False, with_fk=False, with_notnull=False):
     db = get_db()
     ret = dict()
 
@@ -36,6 +36,10 @@ def get_columns(table_name: str, with_pk=False, with_fk=False):
     if with_fk:
         table_fk = foregin_key_list(table_name)
         ret.update({"fk": table_fk})
+    
+    if with_notnull:
+        table_notnull = select(table_schema, "name", lambda i: i["notnull"])
+        ret.update({"notnull": table_notnull})
 
     return ret
 

@@ -122,11 +122,14 @@ def user_update():
 @bp.route("/create/<table_name>", methods=["GET", "POST"])
 @login_required
 def create(table_name):
-    ret = get_columns(table_name, with_pk=True, with_fk=True)
+    ret = get_columns(table_name, with_pk=True, with_fk=True, with_notnull=True)
     table_columns = ret["columns"]
     table_pk = ret["pk"]
     table_fk = select(ret["fk"], "from")
+    table_notnull = ret["notnull"]
     immutable_columns = []
+
+    print(table_notnull)
 
     # 去除自动编号
     for i in table_pk:
@@ -142,6 +145,7 @@ def create(table_name):
         title="添加信息",
         table_name=table_name,
         columns=table_columns,
+        notnull_columns=table_notnull,
         immutable_columns=immutable_columns,
     )
 

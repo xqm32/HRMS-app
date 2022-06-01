@@ -12,14 +12,15 @@ CREATE TABLE IF NOT EXISTS "员工基本信息表" (
 	"员工编号"	INTEGER NOT NULL,
 	"姓名"	TEXT NOT NULL,
 	"性别"	TEXT NOT NULL,
-	"所属部门编号"	INTEGER,
+	"部门编号"	INTEGER NOT NULL,
 	"进入部门日期"	TEXT NOT NULL,
 	"职务编号"	INTEGER NOT NULL,
 	"职称"	TEXT,
 	"起薪日"	TEXT,
 	"在岗状态"	TEXT NOT NULL,
 	PRIMARY KEY("员工编号" AUTOINCREMENT),
-	FOREIGN KEY("职务编号") REFERENCES "职务信息表"("职务编号")
+	FOREIGN KEY("职务编号") REFERENCES "职务信息表"("职务编号"),
+	FOREIGN KEY("部门编号") REFERENCES "部门信息表"("部门编号")
 );
 DROP TABLE IF EXISTS "员工学历信息表";
 CREATE TABLE IF NOT EXISTS "员工学历信息表" (
