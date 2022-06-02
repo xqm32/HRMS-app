@@ -1,5 +1,6 @@
 import functools
 
+import maya
 from flask import (
     Blueprint,
     flash,
@@ -84,12 +85,15 @@ def register():
                 ).fetchone()
                 user_id = user["用户编号"]
 
+                register_date = (
+                    maya.now()
+                    .datetime(to_timezone="Asia/Shanghai")
+                    .strftime("%Y-%m-%d")
+                )
+
                 db.execute(
-                    "INSERT INTO 用户信息表 (用户编号, 真实姓名) VALUES (?, ?)",
-                    (
-                        user_id,
-                        realname,
-                    ),
+                    "INSERT INTO 用户信息表 (用户编号, 用户姓名, 注册日期) VALUES (?, ?, ?)",
+                    (user_id, realname, register_date),
                 )
                 db.commit()
             except db.IntegrityError:

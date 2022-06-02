@@ -1,4 +1,8 @@
 {% extends 'admin/base.html' %}
+{% block style %}
+  {% include
+  'assets/select2-style.html' %}
+{% endblock %}
 {% block content %}
   <section class="content">
     <div class="container-fluid">
@@ -15,13 +19,27 @@
                 {% for i in header %}
                   {% if i not in immutable_columns %}
                     <div class="form-group">
-                      <label for="{{ i }}">{{ i }}</label>
-                      <input name="{{ i }}" class="form-control" id="{{ i }}" placeholder="{{ i }}" {{ 'type='+input_types[i] if i in input_types }} {{ 'required' if i in notnull_columns }} >
+                      <label for="{{ i }}">
+                        {{ i }}
+                        {% if i in notnull_columns %}<sup class="text-danger">*</sup>{% endif %}
+                      </label>
+                      {% if i in selectable_columns %}
+                        <select name={{ i }} class="form-control select2bs4" style="width: 100%;" {{ 'required' if i in notnull_columns }}>
+                          <option>
+                          </option>
+                          {% for j in selectable_columns[i] %}
+                            <option value="{{ j['id'] }}">
+                              {{ j['id'] }} ( {{ j['name'] }} )
+                            </option>
+                          {% endfor %}
+                        </select>
+                      {% else %}
+                        <input name="{{ i }}" class="form-control" id="{{ i }}" value="{{ table_default[i] if table_default[i] }}" placeholder="{{ i }}" {{ 'type='+input_types[i] if i in input_types }} {{ 'required' if i in notnull_columns }}>
+                      {% endif %}
                     </div>
                   {% endif %}
                 {% endfor %}
               </div>
-              <input name="table" value="user_info" hidden>
               <!-- /.card-body -->
               <div class="card-footer">
                 <button type="submit" class="btn btn-success">保存</button>
@@ -34,4 +52,7 @@
       </div>
       <!-- /.container-fluid -->
     </section>
+  {% endblock %}
+  {% block script %}
+    {% include 'assets/select2-script.html' %}
   {% endblock %}

@@ -20,7 +20,13 @@ def to_args(columns, row):
     return "&".join(f"{j}={str(row[j])}" for j in columns)
 
 
-def get_columns(table_name: str, with_pk=False, with_fk=False, with_notnull=False):
+def get_columns(
+    table_name: str,
+    with_pk=False,
+    with_fk=False,
+    with_notnull=False,
+    with_default=False,
+):
     db = get_db()
     ret = dict()
 
@@ -36,10 +42,14 @@ def get_columns(table_name: str, with_pk=False, with_fk=False, with_notnull=Fals
     if with_fk:
         table_fk = foregin_key_list(table_name)
         ret.update({"fk": table_fk})
-    
+
     if with_notnull:
         table_notnull = select(table_schema, "name", lambda i: i["notnull"])
         ret.update({"notnull": table_notnull})
+
+    if with_default:
+        table_default = {i["name"]: i["dflt_value"] for i in table_schema}
+        ret.update({"default": table_default})
 
     return ret
 
@@ -75,6 +85,11 @@ def create_table(
         if i in table_columns:
             table_columns.remove(i)
 
+    for i in form.keys():
+        print(f"{i} = {form[i]}")
+        if not form[i]:
+            table_columns.remove(i)
+
     columns = ", ".join(f"{i}" for i in table_columns)
     values = ", ".join(f"?" for i in table_columns)
 
@@ -87,8 +102,8 @@ def create_table(
             [form[i] for i in table_columns],
         )
         db.commit()
-    except db.IntegrityError:
-        flash("数据库错误", "error")
+    except db.Error as e:
+        flash(e.args[0], "error")
     else:
         if message:
             flash(*message)
@@ -119,8 +134,8 @@ def update_table(
             [form[i] for i in table_columns],
         )
         db.commit()
-    except db.IntegrityError:
-        flash("数据库错误", "error")
+    except db.Error as e:
+        flash(e.args[0], "error")
     else:
         if message:
             flash(*message)

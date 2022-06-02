@@ -1,4 +1,3 @@
-import maya
 from flask import (
     Blueprint,
     flash,
@@ -32,33 +31,27 @@ def index():
     db = get_db()
 
     department_count = db.execute("SELECT COUNT(*) AS COUNT FROM 部门信息表").fetchone()
-    employee_count = db.execute("SELECT COUNT(*) AS COUNT FROM 员工基本信息表").fetchone()
-
-    attendance_count = db.execute(
-        "SELECT COUNT(*) AS COUNT FROM 考勤信息表 WHERE 考勤日期 = ?",
-        (maya.now().datetime(to_timezone="Asia/Shanghai").strftime("%Y-%m-%d"),),
+    employee_count = db.execute("SELECT COUNT(*) AS COUNT FROM 职工信息表").fetchone()
+    title_count = db.execute(
+        "SELECT COUNT(DISTINCT 职工编号) AS COUNT FROM 职工职称视图"
     ).fetchone()
 
-    try:
-        attendance_rate = f"{attendance_count['COUNT']/employee_count['COUNT']*100:.2f}"
-    except ZeroDivisionError:
-        attendance_rate = "0.00"
+    title_rate = (
+        round(title_count["COUNT"] / employee_count["COUNT"] * 100, 2)
+        if employee_count["COUNT"] != 0
+        else 0
+    )
 
-    wages_sum = db.execute(
-        "SELECT SUM(应发工资) AS SUM FROM 工资计发信息表 WHERE 计发日期 = ?",
-        (maya.now().datetime(to_timezone="Asia/Shanghai").strftime("%Y-%m"),),
-    ).fetchone()
-
-    if wages_sum["SUM"] is None:
-        total_wages = "0.00"
-    else:
-        total_wages = f"{wages_sum['SUM']:.2f}"
+    department = db.execute("SELECT * FROM 部门信息表").fetchall()
+    title = db.execute("SELECT * FROM 职称信息表").fetchall()
 
     table = {
         "部门数量": department_count["COUNT"],
         "员工数量": employee_count["COUNT"],
-        "计发工资": total_wages,
-        "考勤率": attendance_rate,
+        "获职称人数": title_count["COUNT"],
+        "获职称比例": title_rate,
+        "部门": department,
+        "职称": title,
     }
 
     return render_template("admin/index.html", table=table)
@@ -70,7 +63,7 @@ def user_update():
     db = get_db()
 
     immutable_columns = {"用户编号", "用户类型", "权限", "用户名"}
-    input_types = {"密码": "password", "邮箱": "email"}
+    input_types = {"密码": "password", "电子邮箱": "email", "注册日期": "date"}
 
     if request.method == "POST":
         if request.form["table"] == "user_info":
@@ -122,18 +115,57 @@ def user_update():
 @bp.route("/create/<table_name>", methods=["GET", "POST"])
 @login_required
 def create(table_name):
-    ret = get_columns(table_name, with_pk=True, with_fk=True, with_notnull=True)
+    db = get_db()
+
+    ret = get_columns(
+        table_name, with_pk=True, with_fk=True, with_notnull=True, with_default=True
+    )
     header = ret["columns"]
+    fk = ret["fk"]
+
     table_pk = ret["pk"]
-    table_fk = select(ret["fk"], "from")
+    table_fk = select(fk, "from")
     table_notnull = ret["notnull"]
+    table_default = ret["default"]
+
     immutable_columns = []
 
+    input_types = dict()
 
     # 去除自动编号
     for i in table_pk:
         if "编号" in i and i not in table_fk:
             immutable_columns.append(i)
+
+    for i in header:
+        if "人数" in i:
+            immutable_columns.append(i)
+        if "日期" in i:
+            input_types.update({i: "date"})
+
+    selectable_columns = dict()
+    for i in fk:
+        things = db.execute(f"SELECT * FROM {i['table']}").fetchall()
+
+        name = i["to"]
+        id = i["to"]
+
+        if things:
+            if i["to"].replace("编号", "名称") in things[0].keys():
+                name = i["to"].replace("编号", "名称")
+            elif i["to"].replace("编号", "姓名") in things[0].keys():
+                name = i["to"].replace("编号", "姓名")
+
+        l = [
+            {
+                "from": i["from"],
+                "name": j[name],
+                "id": j[id],
+            }
+            for j in things
+        ]
+
+        selectable_columns.update({i["from"]: l})
 
     if request.method == "POST":
         create_table(table_name, immutable_columns, request.form, ("添加成功", "success"))
@@ -144,8 +176,11 @@ def create(table_name):
         title="添加信息",
         table_name=table_name,
         header=header,
+        input_types=input_types,
+        table_default=table_default,
         immutable_columns=immutable_columns,
         notnull_columns=table_notnull,
+        selectable_columns=selectable_columns,
     )
 
 
@@ -159,6 +194,10 @@ def retrieve(table_name):
     table_columns = ret["columns"]
     table_pk = ret["pk"]
 
+    no_edit = False
+    if "视图" in table_name:
+        no_edit = True
+
     header = table_columns
     content = [
         {"row": i, "pk": "&".join(f"{j}={str(i[j])}" for j in table_pk)}
@@ -168,6 +207,7 @@ def retrieve(table_name):
     return render_template(
         "admin/retrieve-base.html",
         title=table_name,
+        no_edit=no_edit,
         table_name=table_name,
         header=header,
         content=content,
@@ -178,14 +218,53 @@ def retrieve(table_name):
 @login_required
 def update(table_name):
     db = get_db()
-    ret = get_columns(table_name, with_pk=True, with_notnull=True)
+
+    ret = get_columns(table_name, with_pk=True, with_fk=True, with_notnull=True)
+    header = ret["columns"]
+    fk = ret["fk"]
+
     table_pk = ret["pk"]
+    table_fk = select(fk, "from")
     table_notnull = ret["notnull"]
+
+    immutable_columns = list(table_pk)
+
+    input_types = dict()
+
+    for i in header:
+        if "人数" in i:
+            immutable_columns.append(i)
+        if "日期" in i:
+            input_types.update({i: "date"})
+
+    selectable_columns = dict()
+    for i in fk:
+        things = db.execute(f"SELECT * FROM {i['table']}").fetchall()
+
+        name = i["to"]
+        id = i["to"]
+
+        if things:
+            if i["to"].replace("编号", "名称") in things[0].keys():
+                name = i["to"].replace("编号", "名称")
+            elif i["to"].replace("编号", "姓名") in things[0].keys():
+                name = i["to"].replace("编号", "姓名")
+
+        l = [
+            {
+                "from": i["from"],
+                "name": j[name],
+                "id": j[id],
+            }
+            for j in things
+        ]
+
+        selectable_columns.update({i["from"]: l})
 
     if request.method == "POST":
         update_table(
             table_name,
-            table_pk,
+            immutable_columns,
             request.form,
             to_where_clause(request.args),
             ("修改成功", "success"),
@@ -204,8 +283,10 @@ def update(table_name):
         title="修改信息",
         table_name=table_name,
         content=content,
-        immutable_columns=table_pk,
+        input_types=input_types,
+        immutable_columns=immutable_columns,
         notnull_columns=table_notnull,
+        selectable_columns=selectable_columns,
     )
 
 
@@ -217,8 +298,8 @@ def delete(table_name):
     try:
         db.execute(f"DELETE FROM {table_name} WHERE {to_where_clause(request.args)}")
         db.commit()
-    except db.IntegrityError:
-        flash("数据库错误", "error")
+    except db.Error as e:
+        flash(e.args[0], "error")
     else:
         flash("删除成功", "success")
 

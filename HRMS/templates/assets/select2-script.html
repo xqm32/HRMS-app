@@ -1,0 +1,15 @@
+<!-- Select2 -->
+<script src="{{ url_for('static', filename='plugins/select2/js/select2.full.min.js') }}"></script>
+<!-- See https://select2.org/i18n#language-files -->
+<script src="{{ url_for('static', filename='plugins/select2/js/i18n/zh-CN.js') }}"></script>
+<script>
+  (function () {
+    //Initialize Select2 Elements
+    $(".select2bs4").select2({
+      language: "zh-CN",
+      theme: "bootstrap4",
+      placeholder: "请选择",
+      allowClear: true,
+    });
+  })();
+</script>

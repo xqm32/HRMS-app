@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask
 
 
 def create_app(test_config=None):
@@ -32,10 +32,11 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # apply the blueprints to the app
-    from HRMS import auth, admin
+    from HRMS import auth, admin, api
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(admin.bp)
+    app.register_blueprint(api.bp)
 
     # make url_for('index') == url_for('admin.index')
     app.add_url_rule("/", endpoint="index")

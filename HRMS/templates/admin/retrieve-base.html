@@ -20,18 +20,20 @@
             <thead>
               <tr>
                 {% for i in header %}<th>{{ i }}</th>{% endfor %}
-                <th>操作</th>
+                {% if not no_edit %}<th>操作</th>{% endif %}
               </tr>
             </thead>
             <tbody>
               {% for i in content %}
                 <tr>
                   {% for j in header %}<td>{{ i['row'][j] if i['row'][j] }}</td>{% endfor %}
-                  <td class="text-center">
-                  <a class="mr-1" href="/update/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-edit"></i
-                ></a>
-              <a class="ml-1" href="/delete/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-trash"></i
-            ></a>
+                  {% if not no_edit %}
+                    <td class="text-center">
+                    <a class="mr-1" href="/update/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-edit"></i
+                  ></a>
+                <a class="ml-1" href="/delete/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-trash"></i
+              ></a>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
