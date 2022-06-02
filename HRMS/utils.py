@@ -13,6 +13,7 @@ def select(table, column_name, when=None):
 
 
 def to_where_clause(args):
+    # return " AND".join(f" {i}='{args[i]}'" if isinstance(i, str) else f" {i}={args[i]}" for i in args)
     return " AND".join(f" {i}='{args[i]}'" for i in args)
 
 

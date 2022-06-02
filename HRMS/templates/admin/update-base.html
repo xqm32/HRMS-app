@@ -23,12 +23,12 @@
                       {% if i in notnull_columns %}<sup class="text-danger">*</sup>{% endif %}
                     </label>
                     {% if i in selectable_columns %}
-                      <select name="{{ i }}" class="form-control select2bs4" style="width: 100%;" {{ 'required' if i in notnull_columns }}>
+                      <select name="{{ i }}" class="form-control select2bs4" style="width: 100%;" {{ 'disabled' if i in immutable_columns }} {{ 'required' if i in notnull_columns }}>
                         <option>
                         </option>
                         {% for j in selectable_columns[i] %}
-                        <option value="{{ j['id'] }}" {{ 'selected' if content[i] == j['id'] }}>
-                          {{ j['id'] }} ( {{ j['name'] }} )
+                          <option value="{{ j['id'] }}" {{ 'selected' if content[i] == j['id'] }}>
+                            {{ j['id'] }} ( {{ j['name'] }} )
                           </option>
                         {% endfor %}
                       </select>
