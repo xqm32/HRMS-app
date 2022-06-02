@@ -11,5 +11,63 @@
         <p>控制面板</p>
       </a>
     </li>
+    <li class="nav-item menu-open">
+      <a href="#" class="nav-link {{ 'active' if request.path.split('/')[-1] in ['部门信息表', '职务信息表'] }}">
+        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <p>
+          部门管理
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/retrieve/部门信息表" class="nav-link {{ 'active' if '部门信息表' in request.path }}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>部门信息管理</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/retrieve/职务信息表" class="nav-link {{ 'active' if '职务信息表' in request.path }}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>部门职务管理</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-item menu-open">
+      <a href="#" class="nav-link {{ 'active' if request.path.split('/')[-1] in ['职工信息表', '职工职务表', '职工职称表'] }}">
+        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <p>
+          职工管理
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/retrieve/职工信息表" class="nav-link {{ 'active' if '职工信息表' in request.path }}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>职工信息管理</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/retrieve/职工职务表" class="nav-link {{ 'active' if '职工职务表' in request.path }}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>职工职务管理</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/retrieve/职工职称表" class="nav-link {{ 'active' if '职工职称表' in request.path }}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>职工职称管理</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="/retrieve/职称信息表" class="nav-link {{ 'active' if '职称信息表' in request.path }}">
+        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <p>职称管理</p>
+      </a>
+    </li>
   </ul>
 </nav>
