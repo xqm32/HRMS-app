@@ -219,7 +219,6 @@ def retrieve(table_name):
         l = {j[id]: j[name] for j in things}
 
         selectable_columns.update({i["from"]: l})
-    print(fk, selectable_columns)
 
     return render_template(
         "admin/retrieve-base.html",

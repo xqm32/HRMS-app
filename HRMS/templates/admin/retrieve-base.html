@@ -11,8 +11,10 @@
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">{{ table_name }}</h3>
+              {% if not no_edit %}
             <a class="float-right" href="/create/{{ table_name }}"><i class="fas fa-plus"></i
           ></a>
+          {% endif %}
         </div>
         <!-- /.card-header -->
         <div class="card-body">
