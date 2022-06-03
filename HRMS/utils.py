@@ -8,7 +8,7 @@ def error_i18n(e: List[str]):
     err = '\n'.join(e)
     if "FOREIGN KEY constraint failed" in err:
         return "请先检查相关联的信息"
-    if "UNIQUE constraint failed" in err:
+    elif "UNIQUE constraint failed" in err:
         return err.replace("UNIQUE constraint failed", "请检查是否有重复的信息")
     else:
         return err

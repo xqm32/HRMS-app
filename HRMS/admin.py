@@ -12,7 +12,7 @@ from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash
 
 from HRMS.auth import login_required
-from HRMS.db import get_db
+from HRMS.db import get_backup, get_db, has_backup, restore_db
 from HRMS.utils import (
     create_table,
     error_i18n,
@@ -322,3 +322,26 @@ def delete(table_name):
         flash("删除成功", "success")
 
     return redirect(url_for("admin.retrieve", table_name=table_name))
+
+@bp.route("/backup", methods=["GET"])
+@login_required
+def backup():
+    db = get_db()
+    db_backup = get_backup()
+
+    db.backup(db_backup)
+    db_backup.close()
+    flash("备份成功", "success")
+
+    return redirect(url_for('index'))
+
+@bp.route("/restore", methods=["GET"])
+@login_required
+def restore():
+    if not has_backup():
+        flash("数据库备份不存在", "warning")
+        return redirect(url_for('index'))
+    else:
+        restore_db()
+        flash("恢复成功，请重新登录", "success")
+        return redirect(url_for('auth.logout'))

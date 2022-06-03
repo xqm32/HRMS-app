@@ -1,3 +1,5 @@
+import shutil
+import os
 import sqlite3
 
 import click
@@ -19,6 +21,29 @@ def get_db():
         g.db.execute("PRAGMA foreign_keys = ON")
 
     return g.db
+
+def get_backup():
+    if os.path.exists(current_app.config["DATABASE_BACKUP"]):
+        os.remove(current_app.config["DATABASE_BACKUP"])
+
+    db = sqlite3.connect(
+            current_app.config["DATABASE_BACKUP"], detect_types=sqlite3.PARSE_DECLTYPES
+        )
+    db.row_factory = sqlite3.Row
+    return db
+
+def has_backup():
+    return os.path.exists(current_app.config["DATABASE_BACKUP"])
+
+def restore_db():
+    # 必须先检查 has_backup()
+    if not has_backup():
+        return False
+
+    close_db()
+
+    os.remove(current_app.config["DATABASE"])
+    shutil.copyfile(current_app.config["DATABASE_BACKUP"], current_app.config["DATABASE"])
 
 
 def close_db(e=None):

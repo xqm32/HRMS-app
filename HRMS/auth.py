@@ -5,6 +5,7 @@ from flask import (
     Blueprint,
     flash,
     g,
+    get_flashed_messages,
     redirect,
     render_template,
     request,
@@ -139,6 +140,8 @@ def login():
 @bp.route("/logout")
 def logout():
     """Clear the current session, including the stored user id."""
+    flashed_messages = get_flashed_messages(with_categories=True)
     session.clear()
-    flash("您已登出", "info")
+    for i, j in flashed_messages:
+        flash(j, i)
     return redirect(url_for("index"))
