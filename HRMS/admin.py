@@ -34,7 +34,7 @@ def index():
     department_count = db.execute("SELECT COUNT(*) AS COUNT FROM 部门信息表").fetchone()
     employee_count = db.execute("SELECT COUNT(*) AS COUNT FROM 职工信息表").fetchone()
     title_count = db.execute(
-        "SELECT COUNT(DISTINCT 职工编号) AS COUNT FROM 职工职称视图"
+        "SELECT COUNT(DISTINCT 职工编号) AS COUNT FROM 职称信息视图"
     ).fetchone()
 
     title_rate = (
