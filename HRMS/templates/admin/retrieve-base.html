@@ -26,7 +26,12 @@
             <tbody>
               {% for i in content %}
                 <tr>
-                  {% for j in header %}<td>{{ i['row'][j] if i['row'][j] }}</td>{% endfor %}
+                  {% for j in header %}
+                    <td>
+                      {{ i['row'][j] if i['row'][j] }}
+                      {% if j in selectable_columns %}( {{ selectable_columns[j][i['row'][j]] }} ){% endif %}
+                    </td>
+                  {% endfor %}
                   {% if not no_edit %}
                     <td class="text-center">
                     <a class="mr-1" href="/update/{{ table_name }}?{{ i['pk'] }}"><i class="fas fa-edit"></i

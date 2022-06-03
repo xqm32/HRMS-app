@@ -15,6 +15,7 @@ from HRMS.auth import login_required
 from HRMS.db import get_db
 from HRMS.utils import (
     create_table,
+    error_i18n,
     get_columns,
     select,
     to_args,
@@ -190,25 +191,42 @@ def retrieve(table_name):
     db = get_db()
 
     content = db.execute(f"SELECT * FROM {table_name}").fetchall()
-    ret = get_columns(table_name, with_pk=True)
+    ret = get_columns(table_name, with_pk=True, with_fk=True)
     table_columns = ret["columns"]
     table_pk = ret["pk"]
+    fk = ret["fk"]
 
     no_edit = False
     if "视图" in table_name:
         no_edit = True
 
     header = table_columns
-    content = [
-        {"row": i, "pk": "&".join(f"{j}={str(i[j])}" for j in table_pk)}
-        for i in content
-    ]
+    content = [{"row": i, "pk": to_args(table_pk, i)} for i in content]
+
+    selectable_columns = dict()
+    for i in fk:
+        things = db.execute(f"SELECT * FROM {i['table']}").fetchall()
+
+        name = i["to"]
+        id = i["to"]
+
+        if things:
+            if i["to"].replace("编号", "名称") in things[0].keys():
+                name = i["to"].replace("编号", "名称")
+            elif i["to"].replace("编号", "姓名") in things[0].keys():
+                name = i["to"].replace("编号", "姓名")
+
+        l = {j[id]: j[name] for j in things}
+
+        selectable_columns.update({i["from"]: l})
+    print(fk, selectable_columns)
 
     return render_template(
         "admin/retrieve-base.html",
         title=table_name,
         no_edit=no_edit,
         table_name=table_name,
+        selectable_columns=selectable_columns,
         header=header,
         content=content,
     )
@@ -299,7 +317,7 @@ def delete(table_name):
         db.execute(f"DELETE FROM {table_name} WHERE {to_where_clause(request.args)}")
         db.commit()
     except db.Error as e:
-        flash(e.args[0], "error")
+        flash(error_i18n(e.args), "error")
     else:
         flash("删除成功", "success")
 

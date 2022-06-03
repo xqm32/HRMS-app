@@ -1,9 +1,15 @@
-from typing import Dict, Iterable
+from typing import Dict, Iterable, List
 
 from flask import flash
 
 from HRMS.db import get_db
 
+def error_i18n(e: List[str]):
+    err = '\n'.join(e)
+    if "FOREIGN KEY constraint failed" in err:
+        return "请先检查相关联的信息"
+    else:
+        return err
 
 def select(table, column_name, when=None):
     if when:
@@ -104,7 +110,7 @@ def create_table(
         )
         db.commit()
     except db.Error as e:
-        flash(e.args[0], "error")
+        flash(error_i18n(e.args), "error")
     else:
         if message:
             flash(*message)
@@ -136,7 +142,7 @@ def update_table(
         )
         db.commit()
     except db.Error as e:
-        flash(e.args[0], "error")
+        flash(error_i18n(e.args), "error")
     else:
         if message:
             flash(*message)
