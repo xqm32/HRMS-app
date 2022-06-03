@@ -27,6 +27,7 @@ def title_count(department):
     level = db.execute("SELECT DISTINCT 职称等级 FROM 职称信息表").fetchall()
     level = select(level, "职称等级")
 
+    total = 0
     count = []
     for i in level:
         c = db.execute(
@@ -34,10 +35,12 @@ def title_count(department):
             (department, i),
         ).fetchone()
 
-        if c["COUNT"] == 0:
-            return "None"
+        total += c["COUNT"]
 
         count.append(c["COUNT"])
+
+    if total == 0:
+        return {"code": "error"}
 
     color = [hex(hash(i) % 0xFFFFFF).replace("0x", "#") for i in level]
 
@@ -51,4 +54,4 @@ def title_count(department):
         ],
     }
 
-    return ret
+    return {"code": "success", "data": ret}

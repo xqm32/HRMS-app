@@ -5,7 +5,7 @@
       data-accordion="false">
     <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
-       {% set 控制面板 = ['', '职工职务视图'] %}
+       {% set 控制面板 = ['', '职工职务视图', '职工职称视图'] %}
        <li class="nav-item menu-{{ 'open' if request.path.split('/')[-1] in 控制面板 else 'close' }}">
          <a href="#" class="nav-link {{ 'active' if request.path.split('/')[-1] in 控制面板 }}">
            <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -25,8 +25,16 @@
          <ul class="nav nav-treeview">
           <li class="nav-item">
             <a href="/retrieve/职工职务视图" class="nav-link {{ 'active' if '职工职务视图' in request.path }}">
-              <i class="fas fa-chart-pie nav-icon"></i>
-              <p>职工信息一览</p>
+              <i class="fas fa-chart-bar nav-icon"></i>
+              <p>职工职务信息</p>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/retrieve/职工职称视图" class="nav-link {{ 'active' if '职工职称视图' in request.path }}">
+              <i class="fas fa-chart-line nav-icon"></i>
+              <p>职工职称信息</p>
             </a>
           </li>
         </ul>

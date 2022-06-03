@@ -163,13 +163,13 @@
       url: `/api/department/title_count/${id}`,
       dataType: "json",
       success: function (data) {
-        if (data == "None") {
+        if (data.code == "error") {
           $("#pieChart").hide();
           $("#no-data").show();
         } else {
           $("#pieChart").show();
           $("#no-data").hide();
-          chartPie.data = data;
+          chartPie.data = data.data;
           chartPie.update();
         }
       },
