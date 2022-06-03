@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS "职工家庭表" (
 	"亲属姓名"	TEXT NOT NULL,
 	"联系方式"	TEXT,
 	"工作单位"	TEXT,
-	PRIMARY KEY("职工编号","关系名称"),
-	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号")
+	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号"),
+	PRIMARY KEY("职工编号","关系名称")
 );
 DROP TABLE IF EXISTS "部门信息表";
 CREATE TABLE IF NOT EXISTS "部门信息表" (
@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS "职工职称表" (
 	"职工编号"	INTEGER NOT NULL,
 	"职称名称"	TEXT NOT NULL,
 	"起始日期"	TEXT,
-	PRIMARY KEY("职工编号","职称名称"),
 	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号"),
-	FOREIGN KEY("职称名称") REFERENCES "职称信息表"("职称名称")
+	FOREIGN KEY("职称名称") REFERENCES "职称信息表"("职称名称"),
+	PRIMARY KEY("职工编号","职称名称")
 );
 DROP TABLE IF EXISTS "职称信息表";
 CREATE TABLE IF NOT EXISTS "职称信息表" (
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS "用户信息表" (
 	"联系方式"	TEXT,
 	"联系地址"	TEXT,
 	"注册日期"	TEXT,
-	PRIMARY KEY("用户编号"),
-	FOREIGN KEY("用户编号") REFERENCES "用户验证表"("用户编号")
+	FOREIGN KEY("用户编号") REFERENCES "用户验证表"("用户编号"),
+	PRIMARY KEY("用户编号")
 );
 DROP TABLE IF EXISTS "职务信息表";
 CREATE TABLE IF NOT EXISTS "职务信息表" (
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS "职务信息表" (
 	"所在部门"	INTEGER NOT NULL,
 	"基础薪资"	REAL DEFAULT 1000,
 	"最高薪资"	REAL DEFAULT 1000000,
-	PRIMARY KEY("职务编号" AUTOINCREMENT),
-	FOREIGN KEY("所在部门") REFERENCES "部门信息表"("部门编号")
+	FOREIGN KEY("所在部门") REFERENCES "部门信息表"("部门编号"),
+	PRIMARY KEY("职务编号" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "个人信息表";
 CREATE TABLE IF NOT EXISTS "个人信息表" (
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS "工作经历表" (
 	"最高职称"	TEXT,
 	"起始日期"	TEXT NOT NULL,
 	"结束日期"	TEXT,
-	PRIMARY KEY("职工编号","所在单位","起始日期"),
-	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号")
+	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号"),
+	PRIMARY KEY("职工编号","所在单位","起始日期")
 );
 DROP TABLE IF EXISTS "学习经历表";
 CREATE TABLE IF NOT EXISTS "学习经历表" (
@@ -106,8 +106,8 @@ CREATE TABLE IF NOT EXISTS "学习经历表" (
 	"就读专业"	TEXT,
 	"起始日期"	TEXT NOT NULL,
 	"结束日期"	TEXT,
-	PRIMARY KEY("职工编号","所在院校","起始日期"),
-	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号")
+	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号"),
+	PRIMARY KEY("职工编号","所在院校","起始日期")
 );
 DROP TABLE IF EXISTS "职工职务表";
 CREATE TABLE IF NOT EXISTS "职工职务表" (
@@ -115,9 +115,9 @@ CREATE TABLE IF NOT EXISTS "职工职务表" (
 	"职务编号"	INTEGER NOT NULL,
 	"起始日期"	TEXT NOT NULL,
 	"结束日期"	TEXT,
-	PRIMARY KEY("职工编号","职务编号","起始日期"),
 	FOREIGN KEY("职工编号") REFERENCES "职工信息表"("职工编号"),
-	FOREIGN KEY("职务编号") REFERENCES "职务信息表"("职务编号")
+	FOREIGN KEY("职务编号") REFERENCES "职务信息表"("职务编号"),
+	PRIMARY KEY("职工编号","职务编号","起始日期")
 );
 DROP TABLE IF EXISTS "职工奖惩表";
 CREATE TABLE IF NOT EXISTS "职工奖惩表" (
@@ -144,6 +144,42 @@ ON 用户信息表
 BEGIN
     DELETE FROM 用户验证表 WHERE 用户编号 = old.用户编号;
 END;
+DROP TRIGGER IF EXISTS "增加职工职务触发器";
+CREATE TRIGGER 增加职工职务触发器 AFTER INSERT
+ON 职工职务表
+BEGIN
+	UPDATE 部门信息表
+	SET 下属人数 = 部门人数视图.部门人数
+	FROM 部门人数视图
+	WHERE 部门信息表.部门编号 = 部门人数视图.部门编号;
+	UPDATE 部门信息表
+	SET 下属人数 = 0
+	WHERE NOT EXISTS (SELECT * FROM 部门人数视图 WHERE 部门编号=部门信息表.部门编号);
+END;
+DROP TRIGGER IF EXISTS "更新职工职务触发器";
+CREATE TRIGGER 更新职工职务触发器 AFTER UPDATE
+ON 职工职务表
+BEGIN
+	UPDATE 部门信息表
+	SET 下属人数 = 部门人数视图.部门人数
+	FROM 部门人数视图
+	WHERE 部门信息表.部门编号 = 部门人数视图.部门编号;
+	UPDATE 部门信息表
+	SET 下属人数 = 0
+	WHERE NOT EXISTS (SELECT * FROM 部门人数视图 WHERE 部门编号=部门信息表.部门编号);
+END;
+DROP TRIGGER IF EXISTS "删除职工职务触发器";
+CREATE TRIGGER 删除职工职务触发器 AFTER DELETE
+ON 职工职务表
+BEGIN
+	UPDATE 部门信息表
+	SET 下属人数 = 部门人数视图.部门人数
+	FROM 部门人数视图
+	WHERE 部门信息表.部门编号 = 部门人数视图.部门编号;
+	UPDATE 部门信息表
+	SET 下属人数 = 0
+	WHERE NOT EXISTS (SELECT * FROM 部门人数视图 WHERE 部门编号=部门信息表.部门编号);
+END;
 DROP VIEW IF EXISTS "部门人数视图";
 CREATE VIEW 部门人数视图 AS
 SELECT 
@@ -169,7 +205,7 @@ FROM 职工信息表, 职工职称表, 职称信息表
 WHERE 职工信息表.职工编号 = 职工职称表.职工编号 AND 职工职称表.职称名称=职称信息表.职称名称;
 COMMIT;
 
-PRAGMA foreign_keys = OFF;
+PRAGMA FOREIGN_KEYS = OFF;
 BEGIN TRANSACTION;
 INSERT INTO "用户验证表" VALUES (1,'user1','pbkdf2:sha256:260000$AEVoQ5TZgbaONhgG$b9e77fe9a2153c5f4140f78ac07eb9617b1a7f2953784b51bcdfa3c287797ddf');
 INSERT INTO "职工家庭表" VALUES (1,'关系1','亲属1',NULL,NULL);
@@ -199,4 +235,3 @@ INSERT INTO "工作经历表" VALUES (1,'所在单位1',NULL,NULL,'2022-06-03',N
 INSERT INTO "职工职务表" VALUES (1,1,'2022-06-03',NULL);
 INSERT INTO "职工职务表" VALUES (1,2,'2022-06-03',NULL);
 COMMIT;
-PRAGMA foreign_keys = ON;
