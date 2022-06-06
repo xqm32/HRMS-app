@@ -10,6 +10,8 @@ def error_i18n(e: List[str]):
         return "请先检查相关联的信息"
     elif "UNIQUE constraint failed" in err:
         return err.replace("UNIQUE constraint failed", "请检查是否有重复的信息")
+    elif "CHECK constraint failed" in err:
+        return err.replace("CHECK constraint failed", "请检查填入的信息是否符合规范")
     else:
         return err
 
