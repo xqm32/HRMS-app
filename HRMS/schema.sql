@@ -80,11 +80,11 @@ CREATE TABLE IF NOT EXISTS "职务信息表" (
 DROP TABLE IF EXISTS "个人信息表";
 CREATE TABLE IF NOT EXISTS "个人信息表" (
 	"身份证号"	TEXT NOT NULL UNIQUE,
-	"姓名"	INTEGER,
-	"性别"	INTEGER,
+	"姓名"	TEXT,
+	"性别"	TEXT CHECK("性别" IN ("男", "女") OR "性别" IS NULL),
 	"出生日期"	TEXT,
-	"民族"	INTEGER,
-	"籍贯"	INTEGER,
+	"民族"	TEXT,
+	"籍贯"	TEXT,
 	PRIMARY KEY("身份证号")
 );
 DROP TABLE IF EXISTS "工作经历表";
