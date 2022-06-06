@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS "职工信息表";
 CREATE TABLE IF NOT EXISTS "职工信息表" (
 	"职工编号"	INTEGER NOT NULL UNIQUE,
 	"职工姓名"	TEXT NOT NULL,
-	"职工性别"	TEXT CHECK("职工性别" IN (NULL, "男", "女")),
+	"职工性别"	TEXT CHECK("职工性别" IN ("男", "女") OR "职工性别" IS NULL),
 	"身份证号"	TEXT UNIQUE,
 	"电子邮件"	TEXT,
 	"联系方式"	TEXT,
