@@ -63,7 +63,7 @@
         </li>
       </ul>
     </li>
-    {% set 职工管理 = ['职工信息表', '职工职务表', '职工职称表', '职工奖惩表', '职工家庭表', '学习经历表', '工作经历表'] %}
+    {% set 职工管理 = ['职工信息表', '个人信息表', '职工职务表', '职工职称表', '职工奖惩表', '职工家庭表', '学习经历表', '工作经历表'] %}
     <li class="nav-item menu-{{ 'open' if request.path.split('/')[-1] in 职工管理 else 'close' }}">
       <a href="#" class="nav-link {{ 'active' if request.path.split('/')[-1] in 职工管理 }}">
         <i class="nav-icon fas fa-user-cog"></i>
@@ -77,6 +77,12 @@
           <a href="/retrieve/职工信息表" class="nav-link {{ 'active' if '职工信息表' in request.path }}">
             <i class="fas fa-user-edit nav-icon"></i>
             <p>职工信息管理</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/retrieve/个人信息表" class="nav-link {{ 'active' if '个人信息表' in request.path }}">
+            <i class="fas fa-user-edit nav-icon"></i>
+            <p>个人信息管理</p>
           </a>
         </li>
         <li class="nav-item">
