@@ -7,17 +7,17 @@ English | [中文](README_zh.md)
 on Linux (require sqlite3 >= 3.33.0)
 
 ```bash
-pip3 install -r requirements
-flask init-db
-flask run
+pip3 install -r HRMS/requirements
+flask --app HRMS init-db
+flask --app HRMS run
 ```
 
 on Windows
 
 ```bash
-pip install -r requirements
-flask init-db
-flask run
+pip install -r HRMS/requirements
+flask --app HRMS init-db
+flask --app HRMS run
 ```
 
 ## Features
